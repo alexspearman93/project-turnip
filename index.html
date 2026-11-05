@@ -9,7 +9,7 @@ if(!state||!Array.isArray(state.tiles)||state.tiles.length!==W*H)state={x:8,y:6,
 let tool='hoe';const hint=document.getElementById('hint'),dayEl=document.getElementById('day');
 function save(){localStorage.setItem(key,JSON.stringify(state))}function info(s){hint.textContent=s}function tile(x,y){return state.tiles[y*W+x]}
 function update(){dayEl.textContent='Day '+state.day+' · 🪙 '+state.coins+' · 🌱 '+state.seeds;document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));save();draw()}
-function move(dir){state.facing=dir;const d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[dir];state.x=Math.max(0,Math.min(W-1,state.x+d[0]));state.y=Math.max(0,Math.min(H-1,state.y+d[1]));update()}
+function move(dir){if(state.facing!==dir){state.facing=dir;update();return}const d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[dir];state.x=Math.max(0,Math.min(W-1,state.x+d[0]));state.y=Math.max(0,Math.min(H-1,state.y+d[1]));update()}
 function use(){const d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[state.facing],x=state.x+d[0],y=state.y+d[1];if(x<0||x>=W||y<0||y>=H){info('Face a tile inside the farm.');return}const t=tile(x,y);
 if(tool==='hoe'){if(!t.soil){t.soil=true;info('Freshly tilled soil!')}else info('Already tilled.')}
 if(tool==='seed'){if(!t.soil)info('Till this tile first.');else if(t.seed)info('Something is already growing.');else if(state.seeds<1)info('Out of seeds! Harvest crops to earn more.');else{t.seed=true;t.age=0;t.water=false;state.seeds--;info('Turnip planted!')}}
