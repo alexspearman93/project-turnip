@@ -1,17 +1,17 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#233c2d"><title>Project Turnip</title><style>
 *{box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}button{-webkit-tap-highlight-color:transparent;touch-action:none}body{margin:0;background:#17291e;color:#fff;font-family:system-ui,sans-serif;overflow:hidden;touch-action:none}#wrap{display:flex;flex-direction:column;align-items:center;height:100dvh;padding:8px;gap:6px}header{width:min(100%,560px);display:flex;justify-content:space-between;align-items:center;font-weight:800}header small{font-weight:500}canvas{width:min(100%,560px);height:auto;max-height:62dvh;aspect-ratio:4/3;image-rendering:pixelated;border:4px solid #6d5336;border-radius:8px;background:#80b85e}#bar{width:min(100%,560px);display:flex;gap:6px;justify-content:center;flex-wrap:wrap}button{border:2px solid #a2b37e;background:#314d35;color:white;border-radius:9px;padding:10px 12px;font-size:14px;font-weight:700;touch-action:none}button.active{background:#b9873c;border-color:#ffe0a1}#controls{width:min(100%,560px);display:flex;justify-content:space-between;align-items:center;flex:1;max-height:150px}.pad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,40px);gap:3px}.pad button{padding:0;font-size:23px}.pad .up{grid-column:2;grid-row:1}.pad .left{grid-column:1;grid-row:2}.pad .down{grid-column:2;grid-row:3}.pad .right{grid-column:3;grid-row:2}#action{width:86px;height:86px;border-radius:50%;background:#b9873c;border:4px solid #ffe0a1;font-size:18px}#hint{font-size:12px;color:#c7d5bb;text-align:center;min-height:18px}#day{white-space:nowrap}
-</style></head><body><div id="wrap"><header><span>🌱 TURNIP · HOMESTEAD</span><small id="day"></small></header><canvas id="game" width="512" height="384"></canvas><div id="bar"><button data-tool="hoe">⛏️ Hoe</button><button data-tool="seed">🌱 Seeds</button><button data-tool="water">💧 Water</button><button data-tool="harvest">🧺 Harvest</button><button data-tool="axe">🪓 Axe</button><button data-tool="pick">🪨 Pick</button><button data-tool="scythe">🌿 Scythe</button><button id="sleep">🌙 Sleep</button></div><div id="controls"><div class="pad"><button class="up" data-dir="up">▲</button><button class="left" data-dir="left">◀</button><button class="down" data-dir="down">▼</button><button class="right" data-dir="right">▶</button></div><button id="action">USE</button></div><div id="hint">Explore the homestead. Clear trees, rocks and weeds!</div></div><script>
+</style></head><body><div id="wrap"><header><span>🌲 TURNIP · VALLEY BUILD</span><small id="day"></small></header><canvas id="game" width="512" height="384"></canvas><div id="bar"><button data-tool="hoe">⛏️ Hoe</button><button data-tool="seed">🌱 Seeds</button><button data-tool="water">💧 Water</button><button data-tool="harvest">🧺 Harvest</button><button data-tool="axe">🪓 Axe</button><button data-tool="pick">🪨 Pick</button><button data-tool="scythe">🌿 Scythe</button><button id="sleep">🌙 Sleep</button></div><div id="controls"><div class="pad"><button class="up" data-dir="up">▲</button><button class="left" data-dir="left">◀</button><button class="down" data-dir="down">▼</button><button class="right" data-dir="right">▶</button></div><button id="action">USE</button></div><div id="hint">Explore the homestead. Clear trees, rocks and weeds!</div></div><script>
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;
-const W=16,H=12,T=32,key='project-turnip-save-v1';
+const W=16,H=12,T=32,key='project-turnip-save-v03';
 let state;try{state=JSON.parse(localStorage.getItem(key))}catch(e){}
 const MW=32,MH=24;
 function hash(x,y){let z=Math.imul(x+19,374761393)^Math.imul(y+71,668265263);z=Math.imul(z^(z>>>13),1274126177);return ((z^(z>>>16))>>>0)/4294967295}
 function worldTile(x,y){let a={soil:false,seed:false,water:false,age:0,obj:null};let h=hash(x,y);
- if(x>=12&&x<=18&&y>=9&&y<=14)return a;
- if(x>=14&&x<=18&&y>=4&&y<=8)return a;
+ if(x>=11&&x<=20&&y>=8&&y<=16)return a;
+ if(x>=12&&x<=21&&y>=4&&y<=8)return a;
  if((x-25)*(x-25)/20+(y-17)*(y-17)/9<1){a.obj='water';return a}
- if(h<.19)a.obj='tree';else if(h<.29)a.obj='rock';else if(h<.43)a.obj='weed';return a}
+ if(h<.15)a.obj='tree';else if(h<.23)a.obj='rock';else if(h<.38)a.obj='weed';return a}
 
 if(!state||!Array.isArray(state.tiles)||state.tiles.length!==W*H)state={x:8,y:6,facing:'down',day:1,coins:0,seeds:12,tiles:Array(W*H).fill(null).map(()=>({soil:false,seed:false,water:false,age:0}))};
 if(!state.world||state.world.length!==MW*MH){
@@ -28,7 +28,7 @@ function ground(x,y){return state.world[y*MW+x]}
 let tool='hoe';const hint=document.getElementById('hint'),dayEl=document.getElementById('day');
 function save(){localStorage.setItem(key,JSON.stringify(state))}function info(s){hint.textContent=s}function tile(x,y){return ground(x,y)}
 function update(){dayEl.textContent='Day '+state.day+' · 🪙 '+state.coins+' · 🌱 '+state.seeds+' · 🪵 '+state.wood+' 🪨 '+state.stone+' 🌾 '+state.fiber;document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));save();draw()}
-function move(dir){if(state.facing!==dir){state.facing=dir;update();return}const d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[dir];const nx=state.x+d[0],ny=state.y+d[1];if(nx>=0&&ny>=0&&nx<MW&&ny<MH&&!ground(nx,ny).obj&&!inHouse(nx,ny)){state.x=nx;state.y=ny}update()}
+function move(dir){if(state.facing!==dir){state.facing=dir;update();return}const d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[dir];const nx=state.x+d[0],ny=state.y+d[1];if(nx>=0&&ny>=0&&nx<MW&&ny<MH&&!ground(nx,ny).obj&&!inHouse(nx,ny)&&!cliffBlocked(nx,ny)){state.x=nx;state.y=ny}update()}
 function use(){const d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[state.facing],x=state.x+d[0],y=state.y+d[1];if(x<0||x>=MW||y<0||y>=MH){info('Face a tile inside the farm.');return}const t=tile(x,y);
 if(t.obj){if((t.obj==='tree'&&tool==='axe')||(t.obj==='rock'&&tool==='pick')||(t.obj==='weed'&&tool==='scythe')){
  const type=t.obj;t.obj=null;if(type==='tree')state.wood+=3;else if(type==='rock')state.stone+=2;else state.fiber+=2;
@@ -43,32 +43,94 @@ if(tool==='harvest'){if(t.seed&&t.age>=3){t.seed=false;t.age=0;t.water=false;sta
 update()}
 function sleep(){state.day++;let grown=0;for(const t of state.world){if(t.seed&&t.water&&t.age<3){t.age++;grown++}t.water=false}info('Good morning! '+grown+' crops grew. Water again today.');update()}
 function rect(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(x,y,w,h)}
+
+function cliffBlocked(x,y){return (y<=2 && (x<12||x>22))||(x<=3&&y<12)}
+function polygon(points,color){ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(points[0][0],points[0][1]);for(let i=1;i<points.length;i++)ctx.lineTo(points[i][0],points[i][1]);ctx.closePath();ctx.fill()}
+function ellipse(x,y,rx,ry,c){ctx.fillStyle=c;ctx.beginPath();ctx.ellipse(Math.round(x),Math.round(y),rx,ry,0,0,Math.PI*2);ctx.fill()}
+function treeSprite(px,py,x,y){
+ const n=hash(x+23,y+15),pine=n>.52;
+ ellipse(px+16,py+27,17,6,'#3e6a3d');
+ rect(px+12,py+7,9,22,'#765337');rect(px+14,py+10,3,14,'#a77b4c');
+ if(pine){
+  polygon([[px+16,py-31],[px-5,py+5],[px+37,py+5]],'#244d43');
+  polygon([[px+16,py-21],[px-9,py+16],[px+41,py+16]],'#326858');
+  polygon([[px+16,py-12],[px-8,py+24],[px+40,py+24]],'#39755b');
+  polygon([[px+16,py-27],[px+4,py-2],[px+17,py-4]],'#559274');
+ }else{
+  ellipse(px+16,py-10,23,21,'#284f38');
+  ellipse(px+5,py-12,18,18,'#396c3d');
+  ellipse(px+27,py-18,19,19,'#407e45');
+  ellipse(px+13,py-23,18,17,'#4f9250');
+  ellipse(px+8,py-29,8,6,'#6da65b');
+  ellipse(px+26,py-24,8,6,'#68a35b');
+ }
+}
+function rockSprite(px,py,x,y){
+ ellipse(px+16,py+25,16,6,'#456943');
+ polygon([[px+3,py+24],[px+7,py+12],[px+16,py+6],[px+27,py+12],[px+30,py+25]],'#697572');
+ polygon([[px+7,py+12],[px+16,py+6],[px+27,py+12],[px+20,py+16],[px+10,py+17]],'#a1a9a0');
+ polygon([[px+20,py+16],[px+27,py+12],[px+30,py+25],[px+20,py+26]],'#526461');
+ rect(px+10,py+17,5,2,'#758f67');rect(px+13,py+16,2,5,'#758f67');
+}
 function draw(){
- const camX=Math.max(0,Math.min(MW-W,state.x-Math.floor(W/2))),camY=Math.max(0,Math.min(MH-H,state.y-Math.floor(H/2)));
- function rr(x,y,w,h,c){rect((x-camX)*T,(y-camY)*T,w,h,c)}
- for(let sy=0;sy<H;sy++)for(let sx=0;sx<W;sx++){
- const x=sx+camX,y=sy+camY,px=sx*T,py=sy*T,t=ground(x,y),n=hash(x,y);
- rect(px,py,T,T,(x+y)%2?'#78b45b':'#83bf63');
- if(n<.22){rect(px+7,py+8,3,5,'#5b9c4a');rect(px+21,py+24,3,4,'#569747')}
- if((x>=14&&x<=18&&y>=8&&y<=15)||(x>=15&&x<=22&&y===12))rect(px,py,T,T,(x+y)%2?'#b39a68':'#bba573');
- if(t.soil){rect(px+2,py+2,28,28,'#815236');rect(px+5,py+6,22,3,'#a4734a');rect(px+5,py+17,22,3,'#a4734a')}
- if(t.water){rect(px+3,py+3,26,26,'#665f58');rect(px+8,py+23,5,3,'#70b9db')}
- if(t.seed){const cx=px+16,cy=py+17;if(t.age===0){rect(cx-2,cy+5,4,5,'#4d8a3e');rect(cx-6,cy+1,6,4,'#4a963d')}else if(t.age<3){rect(cx-2,cy-3,4,16,'#377b34');rect(cx-10,cy-5,10,6,'#4c9c3e');rect(cx+1,cy-9,9,7,'#62b548')}else{rect(cx-8,cy+2,16,13,'#eee5e4');rect(cx-5,cy+12,10,4,'#e5d6d6');rect(cx-3,cy-9,6,13,'#3f963f');rect(cx-12,cy-8,11,8,'#60b84b');rect(cx+2,cy-12,11,9,'#57ae45')}}
- if(t.obj==='water'){rect(px,py,T,T,(x+y)%2?'#488fb1':'#4d9abc');rect(px+4,py+9,11,2,'#91d5d7')}
- if(t.obj==='weed'){rect(px+12,py+10,4,17,'#397b37');rect(px+6,py+12,9,6,'#54a244');rect(px+16,py+7,10,7,'#448f39');rect(px+8,py+4,3,3,'#f5dc7a')}
- if(t.obj==='rock'){rect(px+5,py+14,23,13,'#59696b');rect(px+8,py+9,17,8,'#88928d');rect(px+11,py+11,9,3,'#b2b8a9')}
- if(t.obj==='tree'){rect(px+13,py+20,8,12,'#694b31');rect(px+4,py+8,26,19,'#275f3b');rect(px+7,py+2,21,17,'#347c45');rect(px+10,py+5,10,5,'#4d9a55')}
+ const camX=Math.max(0,Math.min(MW-W,state.x-7)),camY=Math.max(0,Math.min(MH-H,state.y-6));
+ const sx=x=>(x-camX)*T,sy=y=>(y-camY)*T;
+ rect(0,0,512,384,'#6c9d58');
+ for(let y=camY;y<camY+H;y++)for(let x=camX;x<camX+W;x++){
+  const px=sx(x),py=sy(y),t=ground(x,y),n=hash(x,y);
+  rect(px,py,32,32,(x+y)%2?'#7da85c':'#82ad60');
+  if(n<.58){rect(px+5+(x%3)*3,py+9,2,5,'#60974f');rect(px+20,py+22,2,4,'#689c50')}
+  if(n>.86&&!t.soil&&!t.obj){rect(px+10,py+13,3,3,'#f4e3a5');rect(px+13,py+10,3,3,'#f5c4c9');rect(px+16,py+13,3,3,'#fff0b5');rect(px+13,py+16,3,3,'#f1e8d1')}
+  const path=(x>=14&&x<=19&&y>=8&&y<=14)||(y===12&&x>=10&&x<=23);
+  if(path&&!t.soil){rect(px,py,32,32,(x+y)%2?'#b5a077':'#bea77c');if(n>.3)rect(px+7,py+19,5,3,'#a78e65')}
+  if(t.soil){rect(px+1,py+1,30,30,'#79523b');rect(px+4,py+5,24,3,'#9d6c48');rect(px+4,py+16,24,3,'#986742');rect(px+4,py+26,24,2,'#9b6b49')}
+  if(t.water&&t.soil){rect(px+2,py+2,28,28,'#65534a');rect(px+9,py+20,8,2,'#7da9ad')}
+  if(t.obj==='water'){rect(px,py,32,32,(x+y)%2?'#427f9b':'#498ba5');rect(px+6,py+9,11,2,'#89bfc4');rect(px+20,py+24,8,2,'#6faab9')}
+  if(t.seed){const cx=px+16,cy=py+17;if(t.age===0){rect(cx-2,cy+4,4,7,'#347d3c');rect(cx-6,cy+1,7,4,'#5ba74c')}else if(t.age<3){rect(cx-2,cy-5,4,17,'#387d3c');ellipse(cx-6,cy-4,8,5,'#4b9b48');ellipse(cx+5,cy-8,8,5,'#65b45b')}else{ellipse(cx,cy+8,10,9,'#e6d8df');ellipse(cx-5,cy-7,8,6,'#4c9b45');ellipse(cx+5,cy-10,8,6,'#60ad50');rect(cx-2,cy-12,4,16,'#43833b')}}
  }
- const hx=(house.x-camX)*T,hy=(house.y-camY)*T;
- if(hx>-house.w*T&&hx<512&&hy>-house.h*T&&hy<384){
- rect(hx,hy+36,house.w*T,house.h*T-36,'#b98957');
- for(let i=0;i<house.w;i++){rect(hx+i*T,hy+34,30,6,'#8b5c3f')}
- rect(hx-9,hy+14,house.w*T+18,30,'#7d4141');rect(hx+4,hy+6,house.w*T-8,14,'#a85d4b');rect(hx+20,hy+66,27,28,'#5b91a2');rect(hx+114,hy+66,27,28,'#5b91a2');rect(hx+65,hy+72,29,56,'#62442f');rect(hx+87,hy+102,4,4,'#e3c17d');rect(hx+120,hy-8,19,27,'#71544a')
+ // raised rocky northern ridgeline: decorative elevation above the walkable valley
+ for(let x=camX;x<camX+W;x++)if(x<12||x>22){
+  const px=sx(x),yy=sy(3);
+  if(yy>-40&&yy<420){rect(px,yy-8,32,11,'#a1a083');rect(px,yy+3,32,12,'#6c6956');rect(px+4,yy+3,12,8,'#88826c');rect(px+19,yy+5,10,6,'#77745f');rect(px,yy+15,32,5,'#435e42')}
  }
- const p=state,px=(p.x-camX)*T,py=(p.y-camY)*T;
- rect(px+8,py+26,18,4,'#4d7442');rect(px+10,py+22,5,8,'#3b3c56');rect(px+19,py+22,5,8,'#3b3c56');rect(px+8,py+13,18,13,'#466d9b');rect(px+8,py+7,18,13,'#e8b384');rect(px+5,py+5,24,7,'#6b4930');rect(px+10,py+1,14,6,'#9b6b42');rect(px+12,py+15,3,3,'#3e312b');rect(px+21,py+15,3,3,'#3e312b');
- const d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[p.facing],tx=p.x+d[0],ty=p.y+d[1];
- if(tx>=0&&tx<MW&&ty>=0&&ty<MH){ctx.strokeStyle='#fff3a3';ctx.lineWidth=2;ctx.strokeRect((tx-camX)*T+2,(ty-camY)*T+2,28,28)}
+ // cabin: front facade, visible roof planes and cast shadow
+ const hx=sx(house.x),hy=sy(house.y);
+ if(hx>-200&&hx<520&&hy>-200&&hy<400){
+  ellipse(hx+82,hy+126,96,16,'#567747');
+  rect(hx+4,hy+45,154,80,'#8e6448');
+  for(let i=0;i<5;i++)rect(hx+5,hy+55+i*13,152,2,'#ab8055');
+  rect(hx+22,hy+70,30,28,'#433e37');rect(hx+26,hy+74,22,20,'#e8bb67');
+  rect(hx+111,hy+70,30,28,'#433e37');rect(hx+115,hy+74,22,20,'#e8bb67');
+  rect(hx+67,hy+77,31,48,'#49362c');rect(hx+88,hy+102,4,4,'#e8c680');
+  polygon([[hx-14,hy+48],[hx+79,hy-17],[hx+174,hy+48],[hx+161,hy+59],[hx+80,hy+2],[hx-1,hy+59]],'#683f36');
+  polygon([[hx-14,hy+48],[hx+79,hy-17],[hx+80,hy+2],[hx-1,hy+59]],'#a65d47');
+  polygon([[hx+79,hy-17],[hx+174,hy+48],[hx+161,hy+59],[hx+80,hy+2]],'#80463d');
+  for(let i=0;i<4;i++)rect(hx+12+i*34,hy+45,21,3,'#c07955');
+  rect(hx+126,hy-24,19,32,'#77736a');rect(hx+128,hy-28,15,5,'#a09a86');
+  rect(hx+61,hy+124,46,7,'#9c8b72');
+ }
+ // far-to-near sorted entities so farmer passes behind tree canopies
+ let objects=[];
+ for(let y=Math.max(0,camY-2);y<Math.min(MH,camY+H+2);y++)for(let x=Math.max(0,camX-2);x<Math.min(MW,camX+W+2);x++){
+  const t=ground(x,y);if(t.obj&&t.obj!=='water')objects.push({x,y,type:t.obj});
+ }
+ objects.push({x:state.x,y:state.y,type:'farmer'});
+ objects.sort((a,b)=>a.y-b.y||a.x-b.x);
+ for(const o of objects){
+  const px=sx(o.x),py=sy(o.y);
+  if(o.type==='tree')treeSprite(px,py,o.x,o.y);
+  else if(o.type==='rock')rockSprite(px,py,o.x,o.y);
+  else if(o.type==='weed'){ellipse(px+16,py+25,13,4,'#4d8145');for(let j=0;j<5;j++){const dx=j*5;polygon([[px+7+dx,py+26],[px+2+dx,py+13-(j%2)*7],[px+11+dx,py+23]],j%2?'#397e40':'#5b9c4c')}rect(px+12,py+9,3,3,'#e8c76f')}
+  else if(o.type==='farmer'){
+   ellipse(px+16,py+29,13,4,'#456d43');
+   rect(px+10,py+23,5,7,'#343b52');rect(px+20,py+23,5,7,'#343b52');
+   rect(px+7,py+14,21,12,'#9b5141');rect(px+12,py+14,4,11,'#d2a477');rect(px+21,py+14,3,10,'#d2a477');
+   rect(px+9,py+6,18,13,'#e9b484');rect(px+5,py+5,26,5,'#6d4930');rect(px+10,py,17,7,'#a77947');
+   rect(px+13,py+14,3,3,'#3a302a');rect(px+23,py+14,3,3,'#3a302a');
+  }
+ }
+ const d={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]}[state.facing],tx=state.x+d[0],ty=state.y+d[1];
+ if(tx>=0&&tx<MW&&ty>=0&&ty<MH){ctx.strokeStyle='#ffe7a1';ctx.lineWidth=2;ctx.strokeRect(sx(tx)+2,sy(ty)+2,28,28)}
 }
 document.querySelectorAll('[data-tool]').forEach(b=>b.addEventListener('click',()=>{tool=b.dataset.tool;update()}));let activeControl=null;
 function stopMovement(){if(!activeControl)return;clearTimeout(activeControl.delay);clearInterval(activeControl.timer);activeControl=null}
