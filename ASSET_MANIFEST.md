@@ -15,7 +15,7 @@ Tracks every graphical asset from idea through in-game acceptance. This document
 ## Asset registry
 | ID | Asset | Status | Target files | Nominal footprint | Notes |
 | --- | --- | --- | --- | --- | --- |
-| A001 | Appalachian farmhouse | PLANNED | `assets/buildings/farmhouse.png` | ~5×4 tile base; larger roof | First priority; correct filled roof and 2.5D depth |
+| A001 | Appalachian farmhouse | CANDIDATE | `assets/buildings/farmhouse.png` | ~5×4 tile base; larger roof | First priority; correct filled roof and 2.5D depth |
 | A002 | Grass/dirt/path tileset | PLANNED | `assets/terrain/ground.png` | 32×32 cells | Seamless organic variants and transitions |
 | A003 | Hardwood tree | PLANNED | `assets/nature/hardwood.png` | 1 tile trunk anchor; larger canopy | Separate canopy/lower parts if needed |
 | A004 | Pine tree | PLANNED | `assets/nature/pine.png` | 1 tile trunk anchor; larger canopy | Distinct silhouette |
@@ -52,3 +52,15 @@ As of v0.3, visuals are drawn procedurally inside `index.html`. **No standalone 
 
 ## First handoff: A001 Farmhouse
 Produce a cohesive rustic timber farmhouse with a fully filled pitched roof, visible front wall, small porch/stoop, warm windows, chimney, subtle vines/weathering and believable down-right cast shadow. Match three-quarter top-down perspective and upper-left light. Provide transparent isolated PNG, exact dimensions and ground/base anchor. Do not bake in background grass, UI, text or scenery. Verify appearance in a 512×384 gameplay composition before integration.
+
+## A001 — Appalachian farmhouse v0.2
+- **Status:** CANDIDATE; uploaded and awaiting validation and in-game testing.
+- **Creator/source:** ChatGPT-generated artwork, refined and raster-exported for Project Turnip; generated asset intended for use in this project.
+- **File:** `assets/buildings/farmhouse.png` (RGBA PNG, 256 × 224 px; single sprite, no sheet grid).
+- **Logical footprint:** provisional 5 × 4 tiles (160 × 128 px), to be confirmed against gameplay collision.
+- **Draw anchor:** provisional (128, 223) in sprite pixel coordinates, at bottom center; may require tuning during integration.
+- **Layering:** world structure with base/footprint grounded at anchor; roof and overhang extend upward, requiring character occlusion review. Use upper-left lighting and subtle down-right shadow.
+- **Animation:** none; static sprite.
+- **Dependencies:** game image loader and Y-order/occlusion handling; collision must be defined independently from transparent sprite bounds.
+- **Validation:** 512 × 384 scale mockup reviewed; live Canvas integration, alpha-edge inspection, mobile readability, and collision tests outstanding.
+- **Approval:** not approved; awaiting Game Development integration and iPhone test.
