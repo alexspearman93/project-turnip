@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"><meta name="theme-color" content="#233c2d"><title>Project Turnip</title><style>
 *{box-sizing:border-box;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}button{-webkit-tap-highlight-color:transparent;touch-action:none}body{margin:0;background:#17291e;color:#fff;font-family:system-ui,sans-serif;overflow:hidden;touch-action:none}#wrap{display:flex;flex-direction:column;align-items:center;height:100dvh;padding:8px;gap:6px}header{width:min(100%,560px);display:flex;justify-content:space-between;align-items:center;font-weight:800}header small{font-weight:500}canvas{width:min(100%,560px);height:auto;max-height:62dvh;aspect-ratio:4/3;image-rendering:pixelated;border:4px solid #6d5336;border-radius:8px;background:#80b85e}#bar{width:min(100%,560px);display:flex;gap:6px;justify-content:center;flex-wrap:wrap}button{border:2px solid #a2b37e;background:#314d35;color:white;border-radius:9px;padding:10px 12px;font-size:14px;font-weight:700;touch-action:none}button.active{background:#b9873c;border-color:#ffe0a1}#controls{width:min(100%,560px);display:flex;justify-content:space-between;align-items:center;flex:1;max-height:150px}.pad{display:grid;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(3,40px);gap:3px}.pad button{padding:0;font-size:23px}.pad .up{grid-column:2;grid-row:1}.pad .left{grid-column:1;grid-row:2}.pad .down{grid-column:2;grid-row:3}.pad .right{grid-column:3;grid-row:2}#action{width:86px;height:86px;border-radius:50%;background:#b9873c;border:4px solid #ffe0a1;font-size:18px}#hint{font-size:12px;color:#c7d5bb;text-align:center;min-height:18px}#day{white-space:nowrap}
-</style></head><body><div id="wrap"><header><span>🌲 TURNIP · VALLEY BUILD</span><small id="day"></small></header><canvas id="game" width="512" height="384"></canvas><div id="bar"><button data-tool="hoe">⛏️ Hoe</button><button data-tool="seed">🌱 Seeds</button><button data-tool="water">💧 Water</button><button data-tool="harvest">🧺 Harvest</button><button data-tool="axe">🪓 Axe</button><button data-tool="pick">🪨 Pick</button><button data-tool="scythe">🌿 Scythe</button><button id="sleep">🌙 Sleep</button></div><div id="controls"><div class="pad"><button class="up" data-dir="up">▲</button><button class="left" data-dir="left">◀</button><button class="down" data-dir="down">▼</button><button class="right" data-dir="right">▶</button></div><button id="action">USE</button></div><div id="hint">Explore the homestead. Clear trees, rocks and weeds!</div></div><script>
+</style></head><body><div id="wrap"><header><span>🏡 TURNIP · ART PASS 0.4</span><small id="day"></small></header><canvas id="game" width="512" height="384"></canvas><div id="bar"><button data-tool="hoe">⛏️ Hoe</button><button data-tool="seed">🌱 Seeds</button><button data-tool="water">💧 Water</button><button data-tool="harvest">🧺 Harvest</button><button data-tool="axe">🪓 Axe</button><button data-tool="pick">🪨 Pick</button><button data-tool="scythe">🌿 Scythe</button><button id="sleep">🌙 Sleep</button></div><div id="controls"><div class="pad"><button class="up" data-dir="up">▲</button><button class="left" data-dir="left">◀</button><button class="down" data-dir="down">▼</button><button class="right" data-dir="right">▶</button></div><button id="action">USE</button></div><div id="hint">Explore the homestead. Clear trees, rocks and weeds!</div></div><script>
 const canvas=document.getElementById('game'),ctx=canvas.getContext('2d');ctx.imageSmoothingEnabled=false;
 const W=16,H=12,T=32,key='project-turnip-save-v03';
 // Redeploy request: v0.3 valley build, 2026-11-05.
@@ -23,6 +23,7 @@ if(!state.world||state.world.length!==MW*MH){
 }
 state.wood??=0;state.stone??=0;state.fiber??=0;
 const house={x:15,y:4,w:5,h:4};
+const farmhouseSprite=new Image();farmhouseSprite.onload=()=>draw();farmhouseSprite.onerror=()=>console.warn('Farmhouse sprite failed to load');farmhouseSprite.src='assets/buildings/farmhouse.png?v=41f9282b';
 function inHouse(x,y){return x>=house.x&&x<house.x+house.w&&y>=house.y&&y<house.y+house.h}
 function ground(x,y){return state.world[y*MW+x]}
 
@@ -94,21 +95,18 @@ function draw(){
   const px=sx(x),yy=sy(3);
   if(yy>-40&&yy<420){rect(px,yy-8,32,11,'#a1a083');rect(px,yy+3,32,12,'#6c6956');rect(px+4,yy+3,12,8,'#88826c');rect(px+19,yy+5,10,6,'#77745f');rect(px,yy+15,32,5,'#435e42')}
  }
- // cabin: front facade, visible roof planes and cast shadow
+ // A001 sprite: farmhouse anchored to existing 5x4-tile collision footprint.
  const hx=sx(house.x),hy=sy(house.y);
- if(hx>-200&&hx<520&&hy>-200&&hy<400){
-  ellipse(hx+82,hy+126,96,16,'#567747');
-  rect(hx+4,hy+45,154,80,'#8e6448');
-  for(let i=0;i<5;i++)rect(hx+5,hy+55+i*13,152,2,'#ab8055');
-  rect(hx+22,hy+70,30,28,'#433e37');rect(hx+26,hy+74,22,20,'#e8bb67');
-  rect(hx+111,hy+70,30,28,'#433e37');rect(hx+115,hy+74,22,20,'#e8bb67');
-  rect(hx+67,hy+77,31,48,'#49362c');rect(hx+88,hy+102,4,4,'#e8c680');
-  polygon([[hx-14,hy+48],[hx+79,hy-17],[hx+174,hy+48],[hx+161,hy+59],[hx+80,hy+2],[hx-1,hy+59]],'#683f36');
-  polygon([[hx-14,hy+48],[hx+79,hy-17],[hx+80,hy+2],[hx-1,hy+59]],'#a65d47');
-  polygon([[hx+79,hy-17],[hx+174,hy+48],[hx+161,hy+59],[hx+80,hy+2]],'#80463d');
-  for(let i=0;i<4;i++)rect(hx+12+i*34,hy+45,21,3,'#c07955');
-  rect(hx+126,hy-24,19,32,'#77736a');rect(hx+128,hy-28,15,5,'#a09a86');
-  rect(hx+61,hy+124,46,7,'#9c8b72');
+ if(hx>-260&&hx<520&&hy>-260&&hy<400){
+  const dw=192,dh=168,dx=hx+(house.w*T-dw)/2,dy=hy+house.h*T-dh;
+  if(farmhouseSprite.complete&&farmhouseSprite.naturalWidth>0){
+   ctx.drawImage(farmhouseSprite,Math.round(dx),Math.round(dy),dw,dh);
+  }else{
+   // Minimal fallback if the art asset is unavailable.
+   rect(hx,hy+42,house.w*T,house.h*T-42,'#89674b');
+   polygon([[hx-10,hy+48],[hx+80,hy-12],[hx+170,hy+48]],'#a45b42');
+   rect(hx+65,hy+78,30,50,'#4d372e');
+  }
  }
  // far-to-near sorted entities so farmer passes behind tree canopies
  let objects=[];
