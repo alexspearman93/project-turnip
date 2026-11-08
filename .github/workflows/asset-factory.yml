@@ -14,8 +14,6 @@ on:
   push:
     paths:
       - 'art_sources/**/*.png'
-      - 'tools/asset_factory.py'
-      - '.github/workflows/asset-factory.yml'
 jobs:
   process:
     runs-on: ubuntu-latest
