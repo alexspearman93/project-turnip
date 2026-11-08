@@ -47,6 +47,18 @@
         1
       ],
       "notes": "Binary upload test tile, not production artwork."
+    },
+    {
+      "id": "pipeline_test_tile",
+      "name": "Pipeline Test Tile",
+      "category": "terrain",
+      "status": "candidate",
+      "src": "assets/inbox/terrain/pipeline_test_tile.png",
+      "width": 32,
+      "height": 32,
+      "anchor": null,
+      "footprint": null,
+      "notes": "Automatically registered; awaiting visual review."
     }
   ]
 }
