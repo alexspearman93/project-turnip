@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "updated": "2026-11-08",
+  "description": "Candidate asset registry for mobile gallery. Listing does not imply approval.",
+  "assets": [
+    {
+      "id": "A001",
+      "name": "Appalachian farmhouse",
+      "category": "building",
+      "status": "ready",
+      "src": "assets/buildings/farmhouse.png",
+      "width": 256,
+      "height": 224,
+      "anchor": [
+        128,
+        223
+      ],
+      "footprint": [
+        5,
+        4
+      ],
+      "notes": "Integrated in game; awaiting visual approval."
+    },
+    {
+      "id": "A002-test",
+      "name": "Terrain full-size upload test",
+      "category": "terrain",
+      "status": "test",
+      "src": "terrain-previews/fullsize_binary_upload_test.png",
+      "width": 512,
+      "height": 384,
+      "anchor": null,
+      "footprint": null,
+      "notes": "Procedural upload test, not approved A002 artwork."
+    },
+    {
+      "id": "A002-tile-test",
+      "name": "Terrain 32px upload test",
+      "category": "terrain",
+      "status": "test",
+      "src": "terrain-previews/a002_binary_upload_test.png",
+      "width": 32,
+      "height": 32,
+      "anchor": null,
+      "footprint": [
+        1,
+        1
+      ],
+      "notes": "Binary upload test tile, not production artwork."
+    }
+  ]
+}
