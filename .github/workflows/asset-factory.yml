@@ -1,0 +1,48 @@
+name: Asset Factory v0.1
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        description: 'PNG sprite sheet path, e.g. art_sources/a002_sheet.png'
+        required: true
+        type: string
+      asset_id:
+        description: 'Asset registry ID'
+        required: true
+        default: A002
+        type: string
+  push:
+    paths:
+      - 'art_sources/**/*.png'
+      - 'tools/asset_factory.py'
+      - '.github/workflows/asset-factory.yml'
+jobs:
+  process:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install 'Pillow>=11,<13'
+      - name: Process sheets
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          SOURCE: ${{ inputs.source }}
+          ASSET_ID: ${{ inputs.asset_id }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            python tools/asset_factory.py --input "$SOURCE" --asset-id "$ASSET_ID"
+          else
+            find art_sources -type f -name '*.png' -print0 | while IFS= read -r -d '' file; do
+              id=$(basename "$file" .png)
+              python tools/asset_factory.py --input "$file" --asset-id "$id" --output "build/asset_factory/$id"
+            done
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: turnip-asset-candidates
+          path: build/asset_factory/
+          if-no-files-found: error
